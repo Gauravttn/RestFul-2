@@ -31,12 +31,15 @@ public class EmployeeRequest {
 	
 	@ApiModelProperty(notes = "To Retreive particular employee details")
     @GetMapping(path = "emp/{id}")
-    public Employee getOne(@PathVariable int id)  {
+    public EntityModel<Employee> getOne(@PathVariable int id)  {
         Employee obj = service.findOne(id);
         if(obj==null){
             throw new EmployeeNotFoundException("id : "+id);
         }
-        return obj;
+        EntityModel<Employee> resource = EntityModel.of(obj);
+        WebMvcLinkBuilder linkTo = linkTo(methodOn(this.getClass()).getAll());
+        resource.add(linkTo.withRel("all-employees"));
+        return resource;
 
     }
 	@ApiModelProperty(notes = "To add a new employee")
